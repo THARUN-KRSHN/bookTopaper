@@ -27,7 +27,7 @@ export function LandingNav() {
   };
 
   return (
-    <nav 
+    <nav
       className={cn(
         "fixed top-0 left-0 right-0 h-16 z-50 transition-all duration-300 flex items-center px-6 lg:px-12",
         isScrolled ? "bg-bg-base/80 backdrop-blur-md border-b border-border shadow-sm" : "bg-transparent"
@@ -36,9 +36,14 @@ export function LandingNav() {
       <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-accent-primary flex items-center justify-center text-white group-hover:scale-105 transition-transform">
-            <BookOpen size={20} />
+          <div className="w-8 h-8 rounded-lg bg-accent-primary flex items-center justify-center text-white">
+            <img
+              src="/images/logo.png"
+              alt="Logo"
+              className="w-5 h-5 object-contain"
+            />
           </div>
+
           <span className="font-styrene font-semibold text-lg text-accent-primary">
             BookToPaper
           </span>
@@ -58,7 +63,7 @@ export function LandingNav() {
         </div>
 
         {/* Mobile menu toggle */}
-        <button 
+        <button
           className="md:hidden p-2 text-text-primary"
           onClick={() => setMobileMenuOpen(true)}
         >

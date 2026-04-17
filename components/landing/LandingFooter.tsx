@@ -14,7 +14,7 @@ export function StatsSection() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-3 gap-12 text-center">
           {stats.map((stat, idx) => (
-            <motion.div 
+            <motion.div
               key={idx}
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -41,14 +41,21 @@ export function LandingFooter() {
       <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
         <div className="col-span-2 lg:col-span-1 space-y-6">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-accent-primary" />
+            <div className="w-8 h-8 rounded-lg bg-accent-primary flex items-center justify-center text-white">
+              <img
+                src="/images/logo.png"
+                alt="Logo"
+                className="w-5 h-5 object-contain"
+              />
+            </div>
+
             <span className="font-styrene font-bold text-xl text-accent-primary">BookToPaper</span>
           </div>
           <p className="text-text-secondary text-sm leading-relaxed max-w-xs">
             The world's first AI-powered study companion that turns your notes into realistic exam papers.
           </p>
         </div>
-        
+
         <div>
           <h4 className="font-styrene font-bold text-sm mb-6 uppercase tracking-wider">Product</h4>
           <ul className="space-y-4 text-sm text-text-secondary">
@@ -59,7 +66,7 @@ export function LandingFooter() {
         </div>
 
         <div>
-           <h4 className="font-styrene font-bold text-sm mb-6 uppercase tracking-wider">Resources</h4>
+          <h4 className="font-styrene font-bold text-sm mb-6 uppercase tracking-wider">Resources</h4>
           <ul className="space-y-4 text-sm text-text-secondary">
             <li><a href="#" className="hover:text-accent-primary transition-colors">Community</a></li>
             <li><a href="#" className="hover:text-accent-primary transition-colors">Guides</a></li>

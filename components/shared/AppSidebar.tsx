@@ -2,16 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Files, 
-  FileText, 
-  Clock, 
-  BadgeCheck, 
-  Brain, 
-  Target, 
-  Calendar, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Files,
+  FileText,
+  Clock,
+  BadgeCheck,
+  Brain,
+  Target,
+  Calendar,
+  Settings,
   HelpCircle,
   Plus,
   LogOut,
@@ -20,7 +20,10 @@ import {
   BookOpen
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useUIStore } from "@/lib/store";
+import { useUIStore, useAuthStore } from "@/lib/store";
+import { auth } from "@/lib/api";
+import { toast } from "@/lib/toast";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 
 const navigation = {
@@ -44,10 +47,23 @@ const navigation = {
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { sidebarOpen, toggleSidebar } = useUIStore();
+  const { user, clearAuth } = useAuthStore();
+
+  const handleLogout = async () => {
+    try { await auth.logout(); } catch {}
+    clearAuth();
+    toast.success("Logged out successfully.");
+    router.push("/");
+  };
+
+  const initials = user?.full_name
+    ? user.full_name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
+    : user?.email?.slice(0, 2).toUpperCase() || "?";
 
   return (
-    <div 
+    <div
       className={cn(
         "fixed left-0 top-0 h-full bg-bg-raised border-r border-border transition-all duration-300 z-50 flex flex-col",
         sidebarOpen ? "w-[264px]" : "w-16"
@@ -57,8 +73,13 @@ export function AppSidebar() {
       <div className="h-16 flex items-center px-4 shrink-0">
         <Link href="/dashboard" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-accent-primary flex items-center justify-center text-white">
-            <BookOpen size={20} />
+            <img
+              src="/images/logo.png"
+              alt="Logo"
+              className="w-5 h-5 object-contain"
+            />
           </div>
+
           {sidebarOpen && (
             <span className="font-styrene font-semibold text-lg text-accent-primary">
               BookToPaper
@@ -70,7 +91,7 @@ export function AppSidebar() {
       {/* New Paper CTA */}
       <div className="px-3 py-4">
         <Link href="/dashboard/papers">
-          <Button 
+          <Button
             className={cn(
               "w-full h-11 flex items-center justify-center gap-2 transition-all",
               !sidebarOpen && "px-0"
@@ -95,25 +116,25 @@ export function AppSidebar() {
           "flex items-center gap-3 p-2 rounded-xl transition-all",
           sidebarOpen ? "bg-accent-primary/5" : "justify-center"
         )}>
-           <div className="w-8 h-8 rounded-full bg-accent-warm/20 flex items-center justify-center text-accent-warm font-semibold">
-            AH
-           </div>
-           {sidebarOpen && (
-             <div className="flex-1 min-w-0">
-               <p className="text-sm font-medium truncate">Alexander Hall</p>
-               <p className="text-xs text-text-secondary truncate">alex@example.edu</p>
-             </div>
-           )}
-           {sidebarOpen && (
-             <Link href="/">
-               <LogOut size={16} className="text-text-secondary hover:text-accent-primary cursor-pointer" />
-             </Link>
-           )}
+          <div className="w-8 h-8 rounded-full bg-accent-warm/20 flex items-center justify-center text-accent-warm font-semibold text-sm">
+            {initials}
+          </div>
+          {sidebarOpen && (
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{user?.full_name || "User"}</p>
+              <p className="text-xs text-text-secondary truncate">{user?.email || ""}</p>
+            </div>
+          )}
+          {sidebarOpen && (
+            <button onClick={handleLogout}>
+              <LogOut size={16} className="text-text-secondary hover:text-accent-primary cursor-pointer" />
+            </button>
+          )}
         </div>
       </div>
 
       {/* Toggle Button */}
-      <button 
+      <button
         onClick={toggleSidebar}
         className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white border border-border rounded-full flex items-center justify-center text-text-secondary shadow-sm hover:text-accent-primary transition-colors"
       >
@@ -135,7 +156,7 @@ function NavSection({ title, items, pathname, expanded }: any) {
         {items.map((item: any) => {
           const isActive = pathname === item.href;
           return (
-            <Link 
+            <Link
               key={item.href}
               href={item.href}
               className={cn(

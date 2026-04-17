@@ -22,23 +22,29 @@ def register():
     sb = get_supabase()
     try:
         result = sb.auth.sign_up({"email": email, "password": password})
+        if not result.user:
+            return jsonify({"error": "Registration failed", "code": "REGISTER_FAILED", "details": {}}), 400
     except Exception as e:
+        print(f"Registration error: {str(e)}")
         return jsonify({"error": str(e), "code": "REGISTER_FAILED", "details": {}}), 400
 
     user = result.user
-    if not user:
-        return jsonify({"error": "Registration failed", "code": "REGISTER_FAILED", "details": {}}), 400
 
-    # Create profile row
-    sb.table("profiles").insert({
-        "id": user.id,
-        "full_name": full_name or email.split("@")[0],
-    }).execute()
+    # Create or update profile row (upsert handles retries)
+    try:
+        sb.table("profiles").upsert({
+            "id": user.id,
+            "full_name": full_name or email.split("@")[0],
+        }).execute()
+    except Exception as e:
+        print(f"Profile upsert error: {str(e)}")
+        # We don't fail registration if profile fails, but it's good to log
 
     return jsonify({
         "message": "Registration successful. Please verify your email.",
         "user_id": user.id,
         "email": user.email,
+        "action_required": "confirm_email"
     }), 201
 
 
@@ -56,7 +62,12 @@ def login():
     try:
         result = sb.auth.sign_in_with_password({"email": email, "password": password})
     except Exception as e:
-        return jsonify({"error": "Invalid credentials", "code": "INVALID_CREDENTIALS", "details": {}}), 401
+        err_msg = str(e)
+        print(f"Login error: {err_msg}")
+        # Common Supabase error: "Email not confirmed"
+        if "confirm" in err_msg.lower():
+            return jsonify({"error": "Please confirm your email address before logging in.", "code": "EMAIL_NOT_CONFIRMED", "details": {}}), 401
+        return jsonify({"error": "Invalid credentials", "code": "INVALID_CREDENTIALS", "details": {"msg": err_msg}}), 401
 
     user = result.user
     session = result.session

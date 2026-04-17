@@ -3,6 +3,8 @@ import { Outfit, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthModal } from "@/components/shared/AuthModal";
 import { CommandPalette } from "@/components/shared/CommandPalette";
+import { AuthProvider } from "@/components/shared/AuthProvider";
+import { Toast } from "@/components/shared/Toast";
 
 const outfit = Outfit({
   variable: "--font-styrene",
@@ -21,7 +23,8 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "BookToPaper — Your notes. Your exam. Your pace.",
-  description: "Upload study material and generate realistic exam papers, evaluate your answers, and build a personalised study plan.",
+  description:
+    "Upload study material and generate realistic exam papers, evaluate your answers, and build a personalised study plan.",
 };
 
 export default function RootLayout({
@@ -35,9 +38,12 @@ export default function RootLayout({
       className={`${outfit.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-screen bg-bg-base text-text-primary selection:bg-accent-primary/20">
-        {children}
-        <AuthModal />
-        <CommandPalette />
+        <AuthProvider>
+          {children}
+          <AuthModal />
+          <CommandPalette />
+          <Toast />
+        </AuthProvider>
       </body>
     </html>
   );
