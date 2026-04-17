@@ -1,0 +1,28 @@
+# Flask core
+flask==3.0.3
+flask-cors==5.0.0
+python-dotenv==1.0.1
+
+# Supabase
+supabase==2.6.0
+
+# HTTP client (OpenRouter API)
+httpx==0.27.0
+
+# PDF text extraction
+PyMuPDF==1.24.5
+
+# PDF generation (pure Python, no native deps)
+reportlab==4.2.2
+
+# Templating
+jinja2==3.1.4
+
+# Image handling
+Pillow==10.4.0
+
+# Production WSGI server
+gunicorn==22.0.0
+
+# Development
+flask-debugtoolbar==0.15.1
