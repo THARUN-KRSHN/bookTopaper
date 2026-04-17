@@ -1,3 +1,5 @@
+"use client";
+
 import { 
   Files, 
   FileText, 
@@ -13,6 +15,8 @@ import { Button } from "@/components/ui/Button";
 import { dummyMaterials } from "@/lib/dummy/materials";
 import { dummyPapers } from "@/lib/dummy/papers";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function DashboardHome() {
   const stats = [
@@ -63,27 +67,35 @@ export default function DashboardHome() {
           <section>
             <h2 className="text-xl font-styrene font-semibold mb-6">Quick Actions</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <ActionCard 
-                icon={Plus} 
-                title="Upload Material" 
-                desc="Add PDFs, images or typed notes"
-                variant="primary"
-              />
-              <ActionCard 
-                icon={Zap} 
-                title="Generate Paper" 
-                desc="AI creates a custom exam paper"
-              />
-              <ActionCard 
-                icon={Clock} 
-                title="Start Exam" 
-                desc="Simulate a real-world test"
-              />
-              <ActionCard 
-                icon={Brain} 
-                title="Study Session" 
-                desc="Flashcards and active recall"
-              />
+              <Link href="/dashboard/materials">
+                <ActionCard 
+                  icon={Plus} 
+                  title="Upload Material" 
+                  desc="Add PDFs, images or typed notes"
+                  variant="primary"
+                />
+              </Link>
+              <Link href="/dashboard/papers">
+                <ActionCard 
+                  icon={Zap} 
+                  title="Generate Paper" 
+                  desc="AI creates a custom exam paper"
+                />
+              </Link>
+              <Link href="/dashboard/exam">
+                <ActionCard 
+                  icon={Clock} 
+                  title="Start Exam" 
+                  desc="Simulate a real-world test"
+                />
+              </Link>
+              <Link href="/dashboard/study">
+                <ActionCard 
+                  icon={Brain} 
+                  title="Study Session" 
+                  desc="Flashcards and active recall"
+                />
+              </Link>
             </div>
           </section>
 
@@ -148,9 +160,11 @@ export default function DashboardHome() {
                     </div>
                   </div>
                 </div>
-                <Button className="w-full bg-accent-warm hover:bg-accent-warm/90 border-none shadow-md">
-                  Start Session
-                </Button>
+                <Link href="/dashboard/study">
+                  <Button className="w-full bg-accent-warm hover:bg-accent-warm/90 border-none shadow-md">
+                    Start Session
+                  </Button>
+                </Link>
               </div>
             </Card>
           </section>

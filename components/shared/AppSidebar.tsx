@@ -69,15 +69,17 @@ export function AppSidebar() {
 
       {/* New Paper CTA */}
       <div className="px-3 py-4">
-        <Button 
-          className={cn(
-            "w-full h-11 flex items-center justify-center gap-2 transition-all",
-            !sidebarOpen && "px-0"
-          )}
-        >
-          <Plus size={20} />
-          {sidebarOpen && <span>New Paper</span>}
-        </Button>
+        <Link href="/dashboard/papers">
+          <Button 
+            className={cn(
+              "w-full h-11 flex items-center justify-center gap-2 transition-all",
+              !sidebarOpen && "px-0"
+            )}
+          >
+            <Plus size={20} />
+            {sidebarOpen && <span>New Paper</span>}
+          </Button>
+        </Link>
       </div>
 
       {/* Nav Sections */}
@@ -102,7 +104,11 @@ export function AppSidebar() {
                <p className="text-xs text-text-secondary truncate">alex@example.edu</p>
              </div>
            )}
-           {sidebarOpen && <LogOut size={16} className="text-text-secondary hover:text-accent-primary cursor-pointer" />}
+           {sidebarOpen && (
+             <Link href="/">
+               <LogOut size={16} className="text-text-secondary hover:text-accent-primary cursor-pointer" />
+             </Link>
+           )}
         </div>
       </div>
 

@@ -2,12 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { Search, FileText, Files, Brain, Settings, Command, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function CommandPalette() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
+
+  const navigate = (href: string) => {
+    setIsOpen(false);
+    router.push(href);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -58,14 +65,14 @@ export function CommandPalette() {
 
         <div className="max-h-[400px] overflow-y-auto p-4 space-y-6">
            <CommandGroup label="Suggestions">
-              <CommandItem icon={Files} label="My Materials" shortcut="G M" />
-              <CommandItem icon={FileText} label="Recent Papers" shortcut="G P" />
-              <CommandItem icon={Brain} label="Start Study Session" shortcut="G S" />
+              <CommandItem icon={Files} label="My Materials" shortcut="G M" onClick={() => navigate("/dashboard/materials")} />
+              <CommandItem icon={FileText} label="Recent Papers" shortcut="G P" onClick={() => navigate("/dashboard/papers")} />
+              <CommandItem icon={Brain} label="Start Study Session" shortcut="G S" onClick={() => navigate("/dashboard/study")} />
            </CommandGroup>
 
            <CommandGroup label="Quick Actions">
-              <CommandItem icon={Plus} label="New Paper" />
-              <CommandItem icon={Settings} label="Settings" shortcut="," />
+              <CommandItem icon={Plus} label="New Paper" onClick={() => navigate("/dashboard/papers")} />
+              <CommandItem icon={Settings} label="Settings" shortcut="," onClick={() => navigate("/dashboard/settings")} />
            </CommandGroup>
         </div>
 
@@ -90,9 +97,12 @@ function CommandGroup({ label, children }: any) {
   );
 }
 
-function CommandItem({ icon: Icon, label, shortcut }: any) {
+function CommandItem({ icon: Icon, label, shortcut, onClick }: any) {
   return (
-    <button className="w-full flex items-center justify-between px-3 py-3 rounded-xl hover:bg-bg-raised transition-colors text-left group">
+    <button 
+      onClick={onClick}
+      className="w-full flex items-center justify-between px-3 py-3 rounded-xl hover:bg-bg-raised transition-colors text-left group"
+    >
       <div className="flex items-center gap-4">
          <div className="w-8 h-8 rounded-lg bg-bg-raised group-hover:bg-white transition-colors flex items-center justify-center text-text-secondary group-hover:text-accent-primary">
             <Icon size={18} />
