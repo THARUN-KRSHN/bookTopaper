@@ -105,6 +105,7 @@ export interface Paper {
   duration_mins: number;
   difficulty: { easy: number; medium: number; hard: number };
   sections: { name: string; rules?: string; questions: Question[] }[];
+  general_instructions?: string;
   pdf_path?: string;
   pdf_url?: string;
   created_at: string;

@@ -119,6 +119,7 @@ def generate_paper(config: dict, user_id: str) -> dict:
         "duration_mins": duration_mins,
         "difficulty": difficulty_dist,
         "sections": built_sections,
+        "general_instructions": paper.get("general_instructions"),
         "pdf_path": paper.get("pdf_path"),
     }
     result = sb.table("papers").insert(db_row).execute()

@@ -157,7 +157,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
     const savedNotifications = localStorage.getItem("btp_notifications");
     if (savedNotifications) {
       try {
-        set({ notifications: JSON.parse(savedNotifications) });
+        useUIStore.setState({ notifications: JSON.parse(savedNotifications) });
       } catch {}
     }
 
