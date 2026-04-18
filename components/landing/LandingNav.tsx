@@ -29,22 +29,22 @@ export function LandingNav() {
   return (
     <nav
       className={cn(
-        "fixed top-0 left-0 right-0 h-16 z-50 transition-all duration-300 flex items-center px-6 lg:px-12",
-        isScrolled ? "bg-bg-base/80 backdrop-blur-md border-b border-border shadow-sm" : "bg-transparent"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        isScrolled ? "h-14 md:h-16 bg-white/80 dark:bg-bg-base/80 backdrop-blur-md border-b border-border shadow-sm" : "h-16 md:h-20 bg-transparent"
       )}
     >
-      <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
+      <div className="max-w-7xl mx-auto h-full px-4 md:px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-accent-primary flex items-center justify-center text-white">
+          <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-accent-primary flex items-center justify-center text-white shadow-lg shadow-accent-primary/20 group-hover:scale-105 transition-transform">
             <img
               src="/images/logo.png"
               alt="Logo"
-              className="w-5 h-5 object-contain"
+              className="w-4 h-4 md:w-5 md:h-5 object-contain"
             />
           </div>
 
-          <span className="font-styrene font-semibold text-lg text-accent-primary">
+          <span className="font-styrene font-bold text-base md:text-xl text-text-primary tracking-tight">
             BookToPaper
           </span>
         </Link>
@@ -56,9 +56,20 @@ export function LandingNav() {
             <Link href="#how-it-works" className="text-sm font-medium text-text-secondary hover:text-accent-primary transition-colors">How it works</Link>
           </nav>
           <div className="h-4 w-px bg-border mx-2" />
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => openAuth("login")} className="px-4 py-2 border-none hover:bg-black/5">Sign In</Button>
-            <Button onClick={() => openAuth("signup")} className="px-5 py-2">Get Started</Button>
+          <div className="flex items-center gap-2 md:gap-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => openAuth("login")} 
+              className="h-9 md:h-11 px-3 md:px-5 text-sm font-bold border-none hover:bg-bg-raised"
+            >
+              Log in
+            </Button>
+            <Button 
+              onClick={() => openAuth("signup")} 
+              className="h-9 md:h-11 px-4 md:px-6 text-sm font-bold shadow-lg shadow-accent-primary/20"
+            >
+              Join free
+            </Button>
           </div>
         </div>
 

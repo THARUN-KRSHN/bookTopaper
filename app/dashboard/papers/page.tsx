@@ -265,9 +265,9 @@ export default function PapersPage() {
         </Card>
       )}
 
-      <div className="grid xl:grid-cols-5 gap-10">
+      <div className="flex flex-col lg:flex-row gap-6 md:gap-8">
         {/* Papers List */}
-        <div className="xl:col-span-2 space-y-6">
+        <div className="w-full lg:w-[320px] xl:w-[380px] shrink-0 space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-styrene font-semibold">Your Papers</h2>
             <div className="relative">
@@ -326,7 +326,7 @@ export default function PapersPage() {
         </div>
 
         {/* Paper Preview */}
-        <div className="xl:col-span-3 space-y-6">
+        <div className="flex-1 min-w-0 space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-styrene font-semibold">Preview</h2>
             {selectedPaper && (
@@ -359,12 +359,12 @@ export default function PapersPage() {
               </div>
             </Card>
           ) : selectedPaper ? (
-            <Card className="min-h-[600px] bg-white border-border shadow-2xl p-0 overflow-hidden">
-              <div className="p-10 space-y-10">
+            <Card className="min-h-[600px] bg-white border-border shadow-2xl p-4 md:p-8 lg:p-10 overflow-hidden">
+              <div className="space-y-10">
                 <div className="text-center space-y-3 border-b-2 border-text-primary pb-8">
-                  <h3 className="text-2xl font-styrene font-bold uppercase tracking-wider">{selectedPaper.title}</h3>
-                  <p className="text-xs font-medium text-text-secondary">{selectedPaper.general_instructions}</p>
-                  <div className="flex justify-between text-xs font-berkeley font-bold uppercase tracking-widest pt-2">
+                  <h3 className="text-xl md:text-2xl font-styrene font-bold uppercase tracking-wider">{selectedPaper.title}</h3>
+                  <p className="text-[10px] md:text-xs font-medium text-text-secondary">{selectedPaper.general_instructions}</p>
+                  <div className="flex justify-between text-[10px] md:text-xs font-berkeley font-bold uppercase tracking-widest pt-2">
                     <span>Format: {selectedPaper.format?.toUpperCase()}</span>
                     <span>Marks: {selectedPaper.total_marks}</span>
                     <span>Time: {selectedPaper.duration_mins}m</span>
@@ -374,24 +374,24 @@ export default function PapersPage() {
                 {(selectedPaper.sections || []).map((section, sIdx) => (
                   <div key={sIdx} className="space-y-6">
                     <div className="flex items-center gap-4">
-                      <div className="px-4 py-1 border-l-4 border-accent-primary bg-accent-primary/5 font-bold text-accent-primary">
+                      <div className="px-4 py-1 border-l-4 border-accent-primary bg-accent-primary/5 font-bold text-accent-primary text-xs md:text-sm">
                         {section.name}
                       </div>
                       <div className="flex-1 h-px bg-border" />
                     </div>
                     {section.rules && (
-                      <p className="text-xs italic text-text-secondary border-b border-border pb-3">{section.rules}</p>
+                      <p className="text-[10px] md:text-xs italic text-text-secondary border-b border-border pb-3">{section.rules}</p>
                     )}
                     <div className="space-y-6">
                       {section.questions.map((q) => (
                         <div key={q.id} className="flex gap-4 items-start">
-                          <span className="font-berkeley font-bold text-sm pt-0.5 shrink-0">{q.number}.</span>
+                          <span className="font-berkeley font-bold text-xs md:text-sm pt-0.5 shrink-0">{q.number}.</span>
                           <div className="flex-1 space-y-2">
-                            <p className="text-base font-sohne leading-relaxed">{q.text || q.question}</p>
+                            <p className="text-sm md:text-base font-sohne leading-relaxed">{q.text || q.question}</p>
                             {q.options && (
                               <div className="space-y-1 pl-2">
                                 {q.options.map((opt, i) => (
-                                  <p key={i} className="text-sm text-text-secondary">({["A","B","C","D"][i]}) {opt}</p>
+                                  <p key={i} className="text-xs md:text-sm text-text-secondary">({["A","B","C","D"][i]}) {opt}</p>
                                 ))}
                               </div>
                             )}

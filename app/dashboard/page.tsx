@@ -87,26 +87,26 @@ export default function DashboardHome() {
   ];
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-6 md:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
         <div>
-          <h1 className="text-3xl font-styrene font-semibold mb-2">
+          <h1 className="text-2xl md:text-3xl font-styrene font-semibold mb-1 md:mb-2 text-text-primary">
             Welcome back, {firstName} 👋
           </h1>
-          <p className="text-text-secondary">
+          <p className="text-sm text-text-secondary leading-tight opacity-70">
             Track your progress and pick up where you left off.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Link href="/dashboard/evaluations">
-            <Button variant="ghost" className="h-11 shadow-sm px-5">
-              View Evaluations
+        <div className="flex items-center gap-2 md:gap-3">
+          <Link href="/dashboard/evaluations" className="flex-1 md:flex-none">
+            <Button variant="ghost" className="w-full h-10 md:h-11 shadow-sm px-4 md:px-5 text-sm">
+              Evaluations
             </Button>
           </Link>
-          <Link href="/dashboard/papers">
-            <Button className="h-11 shadow-lg px-5 flex items-center gap-2">
-              <Plus size={18} />
+          <Link href="/dashboard/papers" className="flex-1 md:flex-none">
+            <Button className="w-full h-10 md:h-11 shadow-lg px-4 md:px-5 flex items-center justify-center gap-2 text-sm">
+              <Plus size={16} />
               New Paper
             </Button>
           </Link>
@@ -114,32 +114,32 @@ export default function DashboardHome() {
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
         {statCards.map((stat, idx) => (
           <Card
             key={idx}
-            className="p-6 flex flex-col gap-4 hover:shadow-md transition-shadow cursor-pointer group"
+            className="p-4 md:p-6 flex flex-col gap-3 md:gap-4 hover:shadow-md transition-shadow cursor-pointer group"
           >
             <div className="flex items-center justify-between">
               <div
                 className={cn(
-                  "p-2.5 rounded-xl bg-bg-raised group-hover:bg-white transition-colors",
+                  "p-2 md:p-2.5 rounded-xl bg-bg-raised group-hover:bg-white transition-colors",
                   stat.color
                 )}
               >
-                <stat.icon size={20} />
+                <stat.icon size={18} className="md:w-5 md:h-5" />
               </div>
               {loading ? (
-                <Loader2 size={14} className="text-text-secondary/30 animate-spin" />
+                <Loader2 size={12} className="text-text-secondary/30 animate-spin" />
               ) : (
-                <Activity size={16} className="text-text-secondary/30" />
+                <Activity size={14} className="text-text-secondary/30 hidden md:block" />
               )}
             </div>
             <div>
-              <p className="text-[32px] font-styrene font-bold tabular-nums">
+              <p className="text-2xl md:text-[32px] font-styrene font-bold tabular-nums text-text-primary">
                 {loading ? "—" : stat.value}
               </p>
-              <p className="text-xs font-medium text-text-secondary uppercase tracking-widest">
+              <p className="text-[10px] md:text-xs font-bold text-text-secondary uppercase tracking-widest opacity-60">
                 {stat.label}
               </p>
             </div>
@@ -147,17 +147,17 @@ export default function DashboardHome() {
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-3 gap-6 md:gap-8">
         {/* Quick Actions + Activity */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-6 md:space-y-8">
           <section>
-            <h2 className="text-xl font-styrene font-semibold mb-6">Quick Actions</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <h2 className="text-lg md:text-xl font-styrene font-semibold mb-4 md:mb-6">Quick Actions</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
               <Link href="/dashboard/materials">
                 <ActionCard
                   icon={Plus}
                   title="Upload Material"
-                  desc="Add PDFs, images or typed notes"
+                  desc="Add PDFs, images or notes"
                   variant="primary"
                 />
               </Link>
@@ -165,21 +165,21 @@ export default function DashboardHome() {
                 <ActionCard
                   icon={Zap}
                   title="Generate Paper"
-                  desc="AI creates a custom exam paper"
+                  desc="AI-powered exam drafting"
                 />
               </Link>
               <Link href="/dashboard/papers">
                 <ActionCard
                   icon={Clock}
                   title="Start Exam"
-                  desc="Select a paper and begin a timed session"
+                  desc="Begin a timed session"
                 />
               </Link>
               <Link href="/dashboard/study">
                 <ActionCard
                   icon={Brain}
                   title="Study Session"
-                  desc="Flashcards and active recall"
+                  desc="Flashcards & active recall"
                 />
               </Link>
             </div>
@@ -306,7 +306,7 @@ function ActionCard({
   return (
     <div
       className={cn(
-        "p-5 rounded-2xl border flex items-start gap-4 text-left transition-all hover:shadow-lg group cursor-pointer",
+        "p-4 md:p-5 rounded-2xl border flex items-center md:items-start gap-4 text-left transition-all hover:shadow-lg group cursor-pointer",
         variant === "primary"
           ? "bg-accent-primary/5 border-accent-primary/20"
           : "bg-bg-surface border-border hover:border-accent-primary/30"
@@ -314,17 +314,17 @@ function ActionCard({
     >
       <div
         className={cn(
-          "p-2.5 rounded-xl transition-colors shrink-0",
+          "p-2 md:p-2.5 rounded-xl transition-colors shrink-0",
           variant === "primary"
             ? "bg-accent-primary text-white"
             : "bg-bg-raised group-hover:bg-accent-primary group-hover:text-white"
         )}
       >
-        <Icon size={20} />
+        <Icon size={18} className="md:w-5 md:h-5" />
       </div>
       <div>
-        <p className="font-bold text-sm mb-1">{title}</p>
-        <p className="text-xs text-text-secondary leading-relaxed">{desc}</p>
+        <p className="font-bold text-sm mb-0.5 md:mb-1">{title}</p>
+        <p className="text-[11px] md:text-xs text-text-secondary leading-normal opacity-70">{desc}</p>
       </div>
     </div>
   );

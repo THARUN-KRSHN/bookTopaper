@@ -11,12 +11,16 @@ import {
   CloudUpload,
   Moon,
   Sun,
-  Monitor
+  Monitor,
+  ArrowRight,
+  Trash2,
+  X
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useUIStore, useAuthStore } from "@/lib/store";
+import { cn } from "@/lib/utils";
 import { toast } from "@/lib/toast";
 
 const sections = [
@@ -38,69 +42,78 @@ export default function SettingsPage() {
   };
 
   const initials = name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() || "?";
+
+  return (
+    <div className="space-y-6 md:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-3xl font-styrene font-semibold mb-2">Settings</h1>
-        <p className="text-text-secondary">Manage your account and app preferences.</p>
+        <h1 className="text-2xl md:text-3xl font-styrene font-semibold mb-1 md:mb-2 text-text-primary">Settings</h1>
+        <p className="text-sm text-text-secondary opacity-70">Manage your account and preferences.</p>
       </div>
 
-      <div className="grid lg:grid-cols-4 gap-10">
-        {/* Sidebar */}
-        <div className="lg:col-span-1 space-y-1">
-          {sections.map(s => (
-            <button
-              key={s.id}
-              onClick={() => setActiveSection(s.id)}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                activeSection === s.id ? "bg-accent-primary text-white shadow-lg shadow-accent-primary/20" : "text-text-secondary hover:bg-bg-raised"
-              )}
-            >
-              <s.icon size={18} />
-              {s.label}
-            </button>
-          ))}
+      <div className="flex flex-col lg:flex-row gap-6 md:gap-10">
+        {/* Sidebar / Tabs */}
+        <div className="w-full lg:w-64 shrink-0 overflow-x-auto">
+          <div className="flex lg:flex-col gap-1 md:gap-2 pb-2 lg:pb-0">
+            {sections.map(s => (
+              <button
+                key={s.id}
+                onClick={() => setActiveSection(s.id)}
+                className={cn(
+                  "flex items-center gap-2 md:gap-3 px-4 py-2.5 md:py-3 rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap lg:w-full",
+                  activeSection === s.id 
+                    ? "bg-accent-primary text-white shadow-lg shadow-accent-primary/20" 
+                    : "text-text-secondary hover:bg-bg-raised bg-bg-surface md:bg-transparent border border-border md:border-none"
+                )}
+              >
+                <s.icon size={16} className="md:w-[18px] md:h-[18px]" />
+                {s.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Content */}
-        <div className="lg:col-span-3">
-          <Card className="p-8 space-y-10 border-none shadow-xl bg-white">
+        <div className="flex-1 min-w-0">
+          <Card className="p-4 md:p-8 lg:p-10 space-y-8 md:space-y-10 border-none shadow-xl bg-white dark:bg-bg-base/40">
             {activeSection === "profile" && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-                 <h2 className="text-xl font-styrene font-bold">Profile Settings</h2>
-                                     <div className="w-24 h-24 rounded-full bg-accent-primary/10 flex items-center justify-center border-4 border-white dark:border-bg-base shadow-xl text-accent-primary text-3xl font-bold">
-                        {user?.avatar_url ? (
-                           <img src={user.avatar_url} alt="Avatar" className="w-full h-full object-cover rounded-full" />
-                        ) : initials}
-                     </div>
-                     <div className="space-y-1 text-center sm:text-left">
-                        <h3 className="text-xl font-bold">{name || "User"}</h3>
-                        <p className="text-sm text-text-secondary">{user?.email}</p>
-                        <Button variant="ghost" className="h-8 px-3 text-xs mt-2 border-border shadow-sm">Remove Avatar</Button>
-                     </div>
+              <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+                <h2 className="text-lg md:text-xl font-styrene font-bold text-text-primary">Profile Settings</h2>
+                
+                <div className="flex flex-col sm:flex-row items-center gap-6">
+                  <div className="w-24 h-24 rounded-full bg-accent-primary/10 flex items-center justify-center border-4 border-white dark:border-bg-base shadow-xl text-accent-primary text-3xl font-bold shrink-0">
+                    {user?.avatar_url ? (
+                      <img src={user.avatar_url} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+                    ) : initials}
                   </div>
+                  <div className="space-y-1 text-center sm:text-left">
+                    <h3 className="text-xl font-bold text-text-primary">{name || "User"}</h3>
+                    <p className="text-sm text-text-secondary">{user?.email}</p>
+                    <Button variant="ghost" className="h-8 px-3 text-xs mt-2 border-border shadow-sm">Remove Avatar</Button>
+                  </div>
+                </div>
 
-                  <div className="grid md:grid-cols-2 gap-6 pt-4">
-                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-text-secondary uppercase tracking-widest pl-1">Full Name</label>
-                        <input 
-                           value={name} 
-                           onChange={(e) => setName(e.target.value)}
-                           className="w-full bg-bg-raised dark:bg-bg-base border border-border rounded-xl px-4 py-3 text-sm focus:border-accent-primary outline-none transition-all"
-                        />
-                     </div>
-                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-text-secondary uppercase tracking-widest pl-1 opacity-50">Email Address (Read Only)</label>
-                        <input 
-                           value={user?.email || ""} 
-                           readOnly
-                           className="w-full bg-bg-raised dark:bg-bg-base border border-border rounded-xl px-4 py-3 text-sm opacity-50 cursor-not-allowed"
-                        />
-                     </div>
+                <div className="grid md:grid-cols-2 gap-6 pt-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-text-secondary uppercase tracking-widest pl-1">Full Name</label>
+                    <input 
+                      value={name} 
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full bg-bg-raised dark:bg-bg-base border border-border rounded-xl px-4 py-3 text-sm focus:border-accent-primary outline-none transition-all"
+                    />
                   </div>
-                  
-                  <div className="pt-6 border-t border-border flex justify-end">
-                     <Button onClick={handleSave} className="h-11 px-8 shadow-lg">Save Changes</Button>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-text-secondary uppercase tracking-widest pl-1 opacity-50">Email Address (Read Only)</label>
+                    <input 
+                      value={user?.email || ""} 
+                      readOnly
+                      className="w-full bg-bg-raised dark:bg-bg-base border border-border rounded-xl px-4 py-3 text-sm opacity-50 cursor-not-allowed"
+                    />
                   </div>
+                </div>
+                
+                <div className="pt-6 border-t border-border flex justify-end">
+                  <Button onClick={handleSave} className="h-11 px-8 shadow-lg">Save Changes</Button>
+                </div>
               </div>
             )}
 

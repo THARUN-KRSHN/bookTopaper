@@ -50,7 +50,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-5xl md:text-7xl lg:text-[72px] font-styrene font-semibold leading-[1.05] tracking-tight text-text-primary mb-8"
+          className="text-3xl md:text-7xl lg:text-[72px] font-styrene font-semibold leading-[1.05] tracking-tight text-text-primary mb-4 md:mb-8"
         >
           Your notes. <br className="hidden md:block" />
           Your exam. <span className="text-accent-primary">Your pace.</span>
@@ -61,7 +61,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-12 leading-relaxed"
+          className="text-sm md:text-xl text-text-secondary max-w-2xl mx-auto mb-6 md:mb-12 leading-relaxed opacity-80"
         >
           Upload any study material and BookToPaper generates realistic exam papers, evaluates your answers, and builds a personalised study plan.
         </motion.p>
@@ -71,20 +71,20 @@ export function HeroSection() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-8 md:mb-16"
         >
           <Button 
             onClick={openSignup}
-            className="w-full sm:w-auto px-8 h-14 text-lg rounded-2xl flex items-center justify-center gap-2 group"
+            className="w-full sm:w-auto px-6 md:px-8 h-11 md:h-14 text-base md:text-lg rounded-xl md:rounded-2xl flex items-center justify-center gap-2 group"
           >
             Start for free
-            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </Button>
           <Button 
             variant="ghost" 
-            className="w-full sm:w-auto px-8 h-14 text-lg rounded-2xl flex items-center justify-center gap-2 border-border/50 hover:bg-white hover:border-border shadow-sm group"
+            className="w-full sm:w-auto px-6 md:px-8 h-11 md:h-14 text-base md:text-lg rounded-xl md:rounded-2xl flex items-center justify-center gap-2 border-border/50 hover:bg-white hover:border-border shadow-sm group"
           >
-            <Play size={18} className="fill-text-primary group-hover:scale-110 transition-transform" />
+            <Play size={16} className="fill-text-primary group-hover:scale-110 transition-transform md:w-[18px] md:h-[18px]" />
             Watch demo
           </Button>
         </motion.div>
@@ -94,15 +94,15 @@ export function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.6 }}
           transition={{ duration: 1, delay: 0.6 }}
-          className="py-6 border-t border-border/50 inline-flex items-center gap-6 text-sm font-medium text-text-secondary"
+          className="py-4 md:py-6 border-t border-border/50 inline-flex items-center gap-4 md:gap-6 text-[10px] md:text-sm font-bold md:font-medium text-text-secondary uppercase tracking-widest md:normal-case md:tracking-normal"
         >
-          <span>Used by 2,400+ students</span>
+          <span>2,400+ students</span>
           <div className="w-1 h-1 rounded-full bg-border" />
           <span className="font-berkeley">KTU</span>
           <div className="w-1 h-1 rounded-full bg-border" />
           <span className="font-berkeley">CBSE</span>
           <div className="w-1 h-1 rounded-full bg-border" />
-          <span>Custom formats</span>
+          <span>Custom</span>
         </motion.div>
       </div>
 

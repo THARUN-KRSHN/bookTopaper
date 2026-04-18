@@ -220,7 +220,10 @@ export default function MaterialsPage() {
           <p className="font-medium">{search ? "No materials match your search." : "No materials yet. Upload your first file above."}</p>
         </div>
       ) : (
-        <div className={cn(view === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4")}>
+        <div className={cn(
+          "grid gap-4 md:gap-6",
+          view === "grid" ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" : "grid-cols-1"
+        )}>
           {filtered.map((mat) => (
             <MaterialCard
               key={mat.id}
@@ -246,9 +249,12 @@ export default function MaterialsPage() {
 
       {/* Topics Drawer */}
       {selectedMaterial && (
-        <div className="fixed inset-0 z-[60] flex">
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setSelectedMaterial(null)} />
-          <div className="relative ml-auto w-full max-w-md bg-bg-surface h-full shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-[60] flex justify-end">
+          <div 
+             className="absolute inset-0 bg-black/20 backdrop-blur-sm animate-in fade-in duration-300"
+             onClick={() => setSelectedMaterial(null)}
+          />
+          <div className="relative w-full md:w-[600px] h-full bg-white dark:bg-bg-base shadow-2xl animate-in slide-in-from-right duration-500 overflow-hidden flex flex-col">
             <div className="p-6 border-b border-border flex items-center justify-between">
               <div>
                 <h3 className="font-styrene font-bold text-lg">{selectedMaterial.filename}</h3>
@@ -310,19 +316,23 @@ function MaterialCard({ material, view, onView, onDelete, onReprocess }: {
 
   if (view === "list") {
     return (
-      <Card className="p-4 flex items-center justify-between gap-4 hover:shadow-lg transition-all">
-        <div className="flex items-center gap-4 flex-1 min-w-0">
-          <div className="w-10 h-10 rounded-xl bg-accent-primary/10 flex items-center justify-center text-accent-primary shrink-0">
+      <Card className="p-3 md:p-4 flex items-center justify-between gap-4 hover:shadow-lg transition-all">
+        <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+          <div className="w-10 h-10 rounded-xl bg-accent-primary/5 flex items-center justify-center text-accent-primary shrink-0">
             <FileText size={20} />
           </div>
-          <div className="min-w-0">
-            <p className="font-semibold text-sm truncate">{material.filename}</p>
-            <p className="text-xs text-text-secondary">{material.topic_count} topics · {formatDate(material.created_at)}</p>
+          <div className="min-w-0 flex-1">
+            <p className="font-bold text-sm truncate text-text-primary">{material.filename}</p>
+            <p className="text-[10px] md:text-xs text-text-secondary opacity-60">
+              {material.topic_count} topics • {formatDate(material.created_at)}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full", statusColor)}>{material.status}</span>
-          <Button variant="ghost" className="h-8 px-3 text-xs" onClick={onView}>Topics</Button>
+          <span className={cn("hidden sm:block text-[10px] font-bold px-2 py-0.5 rounded-full capitalize", statusColor)}>
+            {material.status}
+          </span>
+          <Button variant="ghost" className="h-8 md:h-9 px-3 text-xs border-border" onClick={onView}>View</Button>
           <button onClick={onDelete} className="p-2 text-text-secondary hover:text-red-500 transition-colors">
             <Trash2 size={16} />
           </button>
@@ -332,26 +342,37 @@ function MaterialCard({ material, view, onView, onDelete, onReprocess }: {
   }
 
   return (
-    <Card className="p-0 overflow-hidden group hover:shadow-xl transition-all">
-      <div className="h-32 bg-gradient-to-br from-accent-primary/10 to-accent-warm/10 flex items-center justify-center">
-        <FileText size={40} className="text-accent-primary/40 group-hover:text-accent-primary transition-colors" />
+    <Card className="p-0 overflow-hidden group hover:shadow-xl transition-all flex flex-col h-full border-border/50">
+      <div 
+        onClick={onView}
+        className="h-28 md:h-36 bg-gradient-to-br from-bg-raised to-bg-base flex items-center justify-center cursor-pointer group-hover:opacity-80 transition-opacity"
+      >
+        <FileText size={32} className="md:w-10 md:h-10 text-accent-primary/20 group-hover:text-accent-primary transition-colors" />
       </div>
-      <div className="p-5 space-y-3">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-sm leading-tight flex-1 min-w-0 truncate">{material.filename}</h3>
-          <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0", statusColor)}>{material.status}</span>
+      <div className="p-4 md:p-5 flex-1 flex flex-col justify-between space-y-3">
+        <div className="space-y-1">
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="font-bold text-sm leading-tight flex-1 min-w-0 truncate text-text-primary">{material.filename}</h3>
+            <span className={cn("text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 uppercase tracking-tighter", statusColor)}>
+              {material.status}
+            </span>
+          </div>
+          <p className="text-[10px] md:text-xs text-text-secondary opacity-60">
+            {material.topic_count} topics extracted • {formatDate(material.created_at)}
+          </p>
         </div>
-        <p className="text-xs text-text-secondary">{material.topic_count} topics · {formatDate(material.created_at)}</p>
-        <div className="flex gap-2 pt-1">
-          <Button className="flex-1 h-9 text-xs" onClick={onView}>View Topics</Button>
-          {material.status === "error" && (
-            <button onClick={onReprocess} className="p-2 text-text-secondary hover:text-accent-primary transition-colors" title="Reprocess">
-              <RefreshCw size={16} />
+        <div className="flex gap-2 pt-1 border-t border-border/40 md:border-none md:pt-0">
+          <Button className="flex-1 h-9 text-xs shadow-md" onClick={onView}>View Topics</Button>
+          <div className="flex items-center gap-1">
+            {material.status === "error" && (
+              <button onClick={onReprocess} className="p-2 text-text-secondary hover:text-accent-primary transition-colors" title="Reprocess">
+                <RefreshCw size={14} />
+              </button>
+            )}
+            <button onClick={onDelete} className="p-2 text-text-secondary hover:text-red-500 transition-colors" title="Delete">
+              <Trash2 size={14} />
             </button>
-          )}
-          <button onClick={onDelete} className="p-2 text-text-secondary hover:text-red-500 transition-colors" title="Delete">
-            <Trash2 size={16} />
-          </button>
+          </div>
         </div>
       </div>
     </Card>

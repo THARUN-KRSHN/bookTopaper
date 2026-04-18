@@ -40,10 +40,10 @@ export function DemoFrame() {
   }, []);
 
   return (
-    <section className="py-24 px-6 bg-bg-base">
+    <section className="py-12 md:py-24 px-6 bg-bg-base">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-styrene font-semibold mb-6">Experience the magic.</h2>
+        <div className="text-center mb-10 md:mb-16">
+          <h2 className="text-3xl md:text-5xl font-styrene font-semibold mb-4 md:mb-6 text-text-primary">Experience the magic.</h2>
           <div className="flex items-center justify-center gap-2 md:gap-4">
             {states.map((state, idx) => (
               <button
@@ -88,18 +88,18 @@ export function DemoFrame() {
               <div className="absolute inset-0 dot-grid opacity-[0.05]" />
               
               <AnimatePresence mode="wait">
-                <motion.div
-                  key={states[currentState].id}
-                  initial={{ opacity: 0, scale: 0.98, y: 10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 1.02, y: -10 }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute inset-0 p-8 flex flex-col items-center justify-center"
-                >
-                  {currentState === 0 && <UploadState />}
-                  {currentState === 1 && <GenerateState />}
-                  {currentState === 2 && <EvaluateState />}
-                </motion.div>
+                  <motion.div
+                    key={states[currentState].id}
+                    initial={{ opacity: 0, scale: 0.98, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 1.02, y: -10 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0 p-4 md:p-8 flex flex-col items-center justify-center"
+                  >
+                    {currentState === 0 && <UploadState />}
+                    {currentState === 1 && <GenerateState />}
+                    {currentState === 2 && <EvaluateState />}
+                  </motion.div>
               </AnimatePresence>
             </div>
           </div>
@@ -162,8 +162,8 @@ function UploadState() {
 
 function GenerateState() {
   return (
-    <div className="w-full max-w-2xl bg-white border border-border rounded-xl shadow-2xl p-8 relative overflow-hidden">
-      <div className="h-[400px] overflow-hidden">
+    <div className="w-full max-w-2xl bg-white border border-border rounded-xl shadow-2xl p-4 md:p-8 relative overflow-hidden">
+      <div className="h-[320px] md:h-[400px] overflow-hidden">
         <div className="space-y-8 animate-in fade-in duration-1000">
           <div className="text-center border-b border-border pb-6">
             <h3 className="text-xl font-styrene font-bold mb-2">Internal Assessment Exam - March 2024</h3>
@@ -197,8 +197,8 @@ function GenerateState() {
 
 function EvaluateState() {
   return (
-    <div className="flex flex-col items-center gap-8 w-full max-w-xl">
-      <div className="card w-full p-8 shadow-xl bg-bg-base flex flex-col gap-6">
+    <div className="flex flex-col items-center gap-4 md:gap-8 w-full max-w-xl">
+      <div className="card w-full p-4 md:p-8 shadow-xl bg-bg-base flex flex-col gap-4 md:gap-6">
         <div className="flex items-center justify-between border-b border-border pb-4">
           <div className="flex items-center gap-3">
             <Timer className="text-text-secondary w-5 h-5" />
