@@ -62,7 +62,12 @@ def upload_material():
         process_material(material["id"])
     except Exception as e:
         # Non-fatal: record is already created; client can reprocess
-        pass
+        import traceback
+        from flask import current_app
+        current_app.logger.error(
+            f"[process_material] Failed for material {material['id']}: {e}\n"
+            + traceback.format_exc()
+        )
 
     # Re-fetch with updated status
     sb = get_supabase()

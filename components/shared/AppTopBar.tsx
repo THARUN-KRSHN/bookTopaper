@@ -3,15 +3,26 @@
 import { Bell, Search, Sun, Moon, Menu } from "lucide-react";
 import { useUIStore, useAuthStore } from "@/lib/store";
 import { Button } from "@/components/ui/Button";
+import { useState } from "react";
+import { NotificationPanel } from "./NotificationPanel";
+import { cn } from "@/lib/utils";
 
 export function AppTopBar() {
-  const { toggleSidebar } = useUIStore();
+  const { toggleSidebar, theme, setTheme, notifications } = useUIStore();
   const { user } = useAuthStore();
+  const [notifOpen, setNotifOpen] = useState(false);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   const avatarUrl = user?.avatar_url || null;
   const initials = user?.full_name
     ? user.full_name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
     : user?.email?.slice(0, 2).toUpperCase() || "?";
+
+  const toggleTheme = () => {
+    const next = theme === "light" ? "dark" : theme === "dark" ? "system" : "light";
+    setTheme(next);
+  };
 
   return (
     <header className="h-16 border-b border-border bg-bg-surface flex items-center justify-between px-4 sticky top-0 z-40">
@@ -41,14 +52,30 @@ export function AppTopBar() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="ghost" className="p-2 h-10 w-10 px-0 rounded-full text-text-secondary">
+        <Button 
+          variant="ghost" 
+          className="p-2 h-10 w-10 px-0 rounded-full text-text-secondary relative"
+          onClick={() => setNotifOpen(true)}
+        >
           <Bell size={20} />
+          {unreadCount > 0 && (
+            <span className="absolute top-2 right-2 w-2 h-2 bg-accent-primary rounded-full border-2 border-bg-surface" />
+          )}
         </Button>
-        <Button variant="ghost" className="p-2 h-10 w-10 px-0 rounded-full text-text-secondary">
-          <Sun size={20} className="hidden dark:block" />
-          <Moon size={20} className="block dark:hidden" />
+        <Button 
+          variant="ghost" 
+          className="p-2 h-10 w-10 px-0 rounded-full text-text-secondary"
+          onClick={toggleTheme}
+          title={`Theme: ${theme}`}
+        >
+          {theme === "light" ? <Sun size={20} /> : 
+           theme === "dark" ? <Moon size={20} /> : 
+           <div className="relative">
+             <Sun size={20} className="opacity-50" />
+             <Moon size={12} className="absolute -bottom-1 -right-1" />
+           </div>}
         </Button>
-        <div className="w-8 h-8 rounded-full bg-accent-primary overflow-hidden ml-2 cursor-pointer shadow-sm flex items-center justify-center text-white text-xs font-bold">
+        <div className="w-8 h-8 rounded-full bg-accent-primary overflow-hidden ml-2 cursor-pointer shadow-sm flex items-center justify-center text-white text-xs font-bold ring-2 ring-bg-surface">
           {avatarUrl ? (
             <img src={avatarUrl} alt="User avatar" className="w-full h-full object-cover" />
           ) : (
@@ -56,6 +83,8 @@ export function AppTopBar() {
           )}
         </div>
       </div>
+
+      <NotificationPanel isOpen={notifOpen} onClose={() => setNotifOpen(false)} />
     </header>
   );
 }

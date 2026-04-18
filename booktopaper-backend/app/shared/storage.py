@@ -2,16 +2,32 @@
 app/shared/storage.py — Supabase Storage helper
 """
 import os
+import mimetypes
 from app.extensions import get_supabase
 
 
+def _guess_content_type(path: str) -> str:
+    """Guess MIME type from file extension; default to octet-stream."""
+    mime, _ = mimetypes.guess_type(path)
+    return mime or "application/octet-stream"
+
+
 def upload_to_storage(file_bytes: bytes, path: str, bucket: str) -> str:
-    """Upload bytes to Supabase Storage and return the public URL."""
+    """Upload bytes to Supabase Storage and return the public URL.
+
+    supabase-py v2 requires an explicit content-type in file_options;
+    omitting it causes a misleading 400 'RLS policy' rejection from Storage.
+    """
     sb = get_supabase()
+    content_type = _guess_content_type(path)
     sb.storage.from_(bucket).upload(
         path,
         file_bytes,
-        {"upsert": "true"},
+        {
+            "content-type": content_type,
+            "cache-control": "3600",
+            "upsert": "true",
+        },
     )
     result = sb.storage.from_(bucket).get_public_url(path)
     return result

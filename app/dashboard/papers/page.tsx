@@ -9,6 +9,8 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Card";
 import { cn, formatDate } from "@/lib/utils";
+import { useUIStore } from "@/lib/store";
+import { ConfirmModal } from "@/components/shared/ConfirmModal";
 import { materials as materialsApi, papers as papersApi, exams as examsApi, type Material, type Paper } from "@/lib/api";
 import { toast } from "@/lib/toast";
 import { useRouter } from "next/navigation";
@@ -22,6 +24,12 @@ export default function PapersPage() {
   const [selectedPaper, setSelectedPaper] = useState<Paper | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; paper: Paper | null }>({
+    isOpen: false,
+    paper: null,
+  });
+  
+  const { addNotification } = useUIStore();
 
   // Generation form state
   const [config, setConfig] = useState({
@@ -59,6 +67,11 @@ export default function PapersPage() {
       const paper = await papersApi.generate(config);
       toast.dismiss(id);
       toast.success("Paper generated!");
+      addNotification({
+        title: "Paper Drafted",
+        message: `Your new paper "${config.title}" is ready and saved to your library.`,
+        type: "success",
+      });
       setPaperList((prev) => [paper, ...prev]);
       setSelectedPaper(paper);
       setShowGenPanel(false);
@@ -89,13 +102,17 @@ export default function PapersPage() {
   };
 
   const handleDelete = async (paper: Paper) => {
-    if (!confirm(`Delete "${paper.title}"?`)) return;
     try {
       await papersApi.delete(paper.id);
       const updated = paperList.filter((p) => p.id !== paper.id);
       setPaperList(updated);
       setSelectedPaper(updated[0] || null);
       toast.success("Paper deleted.");
+      addNotification({
+        title: "Paper Deleted",
+        message: `"${paper.title}" has been permanently removed.`,
+        type: "info",
+      });
     } catch {
       toast.error("Delete failed.");
     }
@@ -319,7 +336,7 @@ export default function PapersPage() {
                   <Download size={14} /> PDF
                 </Button>
                 <Button variant="ghost" className="h-9 px-3 text-xs gap-1.5 border-border shadow-sm"
-                  onClick={() => handleDelete(selectedPaper)}>
+                  onClick={() => setDeleteModal({ isOpen: true, paper: selectedPaper })}>
                   <Trash2 size={14} /> Delete
                 </Button>
                 <Button className="h-9 px-4 text-xs gap-1.5 shadow-md"
@@ -399,6 +416,15 @@ export default function PapersPage() {
           )}
         </div>
       </div>
+      <ConfirmModal 
+        isOpen={deleteModal.isOpen}
+        title="Delete Paper"
+        message={`Are you sure you want to delete "${deleteModal.paper?.title}"? This will remove the paper and its stored PDF. This action is irreversible.`}
+        variant="danger"
+        confirmText="Delete Paper"
+        onClose={() => setDeleteModal({ isOpen: false, paper: null })}
+        onConfirm={() => deleteModal.paper && handleDelete(deleteModal.paper)}
+      />
     </div>
   );
 }

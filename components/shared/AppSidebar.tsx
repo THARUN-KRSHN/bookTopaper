@@ -25,6 +25,7 @@ import { auth } from "@/lib/api";
 import { toast } from "@/lib/toast";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { HelpModal } from "./HelpModal";
 
 const navigation = {
   main: [
@@ -41,14 +42,14 @@ const navigation = {
   ],
   utility: [
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
-    { name: "Help", href: "/dashboard/help", icon: HelpCircle },
+    { name: "Help", icon: HelpCircle, isAction: true },
   ],
 };
 
 export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { sidebarOpen, toggleSidebar } = useUIStore();
+  const { sidebarOpen, toggleSidebar, setHelpModalOpen } = useUIStore();
   const { user, clearAuth } = useAuthStore();
 
   const handleLogout = async () => {
@@ -140,6 +141,8 @@ export function AppSidebar() {
       >
         {sidebarOpen ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
       </button>
+
+      <HelpModal />
     </div>
   );
 }
@@ -155,6 +158,26 @@ function NavSection({ title, items, pathname, expanded }: any) {
       <div className="space-y-0.5">
         {items.map((item: any) => {
           const isActive = pathname === item.href;
+          const { setHelpModalOpen } = useUIStore();
+
+          if (item.isAction) {
+            return (
+              <button
+                key={item.name}
+                onClick={() => {
+                  if (item.name === "Help") setHelpModalOpen(true);
+                }}
+                className={cn(
+                  "sidebar-item w-full text-left",
+                  !expanded && "justify-center px-0"
+                )}
+              >
+                <item.icon size={20} />
+                {expanded && <span>{item.name}</span>}
+              </button>
+            );
+          }
+
           return (
             <Link
               key={item.href}

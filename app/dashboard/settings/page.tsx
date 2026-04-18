@@ -16,11 +16,11 @@ import {
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { cn } from "@/lib/utils";
+import { useUIStore, useAuthStore } from "@/lib/store";
+import { toast } from "@/lib/toast";
 
 const sections = [
   { id: "profile", label: "Profile", icon: User },
-  { id: "exam", label: "Exam Preferences", icon: Settings2 },
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "appearance", label: "Appearance", icon: Palette },
   { id: "account", label: "Account & Privacy", icon: ShieldCheck },
@@ -28,9 +28,16 @@ const sections = [
 
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState("profile");
+  const { user } = useAuthStore();
+  const { theme, setTheme, typographyScale, setTypographyScale } = useUIStore();
+  
+  const [name, setName] = useState(user?.full_name || "");
 
-  return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+  const handleSave = () => {
+    toast.success("Settings saved successfully!");
+  };
+
+  const initials = name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() || "?";
       <div>
         <h1 className="text-3xl font-styrene font-semibold mb-2">Settings</h1>
         <p className="text-text-secondary">Manage your account and app preferences.</p>
@@ -60,31 +67,40 @@ export default function SettingsPage() {
             {activeSection === "profile" && (
               <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                  <h2 className="text-xl font-styrene font-bold">Profile Settings</h2>
-                 
-                 <div className="flex flex-col sm:flex-row items-center gap-8">
-                    <div className="relative group">
-                       <div className="w-24 h-24 rounded-full bg-bg-raised overflow-hidden border-2 border-border group-hover:border-accent-primary transition-colors">
-                          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alexander" alt="Avatar" />
-                       </div>
-                       <button className="absolute bottom-0 right-0 p-2 bg-white rounded-full shadow-lg border border-border text-text-secondary hover:text-accent-primary transition-colors">
-                          <CloudUpload size={14} />
-                       </button>
-                    </div>
-                    <div className="space-y-1 text-center sm:text-left">
-                       <h3 className="font-bold">Alexander Hall</h3>
-                       <p className="text-sm text-text-secondary">alexander@example.edu</p>
-                       <Button variant="ghost" className="h-8 px-3 text-xs mt-2 border-border shadow-sm">Remove Avatar</Button>
-                    </div>
-                 </div>
+                                     <div className="w-24 h-24 rounded-full bg-accent-primary/10 flex items-center justify-center border-4 border-white dark:border-bg-base shadow-xl text-accent-primary text-3xl font-bold">
+                        {user?.avatar_url ? (
+                           <img src={user.avatar_url} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+                        ) : initials}
+                     </div>
+                     <div className="space-y-1 text-center sm:text-left">
+                        <h3 className="text-xl font-bold">{name || "User"}</h3>
+                        <p className="text-sm text-text-secondary">{user?.email}</p>
+                        <Button variant="ghost" className="h-8 px-3 text-xs mt-2 border-border shadow-sm">Remove Avatar</Button>
+                     </div>
+                  </div>
 
-                 <div className="grid md:grid-cols-2 gap-6 pt-4">
-                    <Input label="Full Name" defaultValue="Alexander Hall" />
-                    <Input label="Email Address" defaultValue="alexander@example.edu" readOnly />
-                 </div>
-                 
-                 <div className="pt-6 border-t border-border flex justify-end">
-                    <Button className="h-11 px-8 shadow-lg">Save Changes</Button>
-                 </div>
+                  <div className="grid md:grid-cols-2 gap-6 pt-4">
+                     <div className="space-y-2">
+                        <label className="text-xs font-bold text-text-secondary uppercase tracking-widest pl-1">Full Name</label>
+                        <input 
+                           value={name} 
+                           onChange={(e) => setName(e.target.value)}
+                           className="w-full bg-bg-raised dark:bg-bg-base border border-border rounded-xl px-4 py-3 text-sm focus:border-accent-primary outline-none transition-all"
+                        />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-xs font-bold text-text-secondary uppercase tracking-widest pl-1 opacity-50">Email Address (Read Only)</label>
+                        <input 
+                           value={user?.email || ""} 
+                           readOnly
+                           className="w-full bg-bg-raised dark:bg-bg-base border border-border rounded-xl px-4 py-3 text-sm opacity-50 cursor-not-allowed"
+                        />
+                     </div>
+                  </div>
+                  
+                  <div className="pt-6 border-t border-border flex justify-end">
+                     <Button onClick={handleSave} className="h-11 px-8 shadow-lg">Save Changes</Button>
+                  </div>
               </div>
             )}
 
@@ -95,33 +111,95 @@ export default function SettingsPage() {
                  <div className="space-y-6">
                     <h3 className="text-xs font-bold text-text-secondary uppercase tracking-widest pl-1">Theme</h3>
                     <div className="grid grid-cols-3 gap-4">
-                       <ThemeOption icon={Sun} label="Light" active />
-                       <ThemeOption icon={Moon} label="Dark" />
-                       <ThemeOption icon={Monitor} label="System" />
+                       <ThemeOption 
+                          icon={Sun} label="Light" 
+                          active={theme === "light"} 
+                          onClick={() => setTheme("light")} 
+                       />
+                       <ThemeOption 
+                          icon={Moon} label="Dark" 
+                          active={theme === "dark"} 
+                          onClick={() => setTheme("dark")} 
+                       />
+                       <ThemeOption 
+                          icon={Monitor} label="System" 
+                          active={theme === "system"} 
+                          onClick={() => setTheme("system")} 
+                       />
                     </div>
                  </div>
 
                  <div className="space-y-6">
                     <h3 className="text-xs font-bold text-text-secondary uppercase tracking-widest pl-1">Typography Scale</h3>
-                    <div className="flex items-center gap-4 bg-bg-raised p-4 rounded-2xl">
+                    <div className="flex items-center gap-6 bg-bg-raised dark:bg-bg-base p-6 rounded-3xl">
                        <span className="text-sm font-bold opacity-40">A</span>
-                       <div className="flex-1 h-2 bg-white rounded-full relative">
-                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-accent-primary rounded-full shadow-lg cursor-pointer" />
-                       </div>
+                       <input 
+                          type="range" min={80} max={120} step={5}
+                          value={typographyScale}
+                          onChange={(e) => setTypographyScale(+e.target.value)}
+                          className="flex-1 accent-accent-primary h-1.5 bg-border rounded-full appearance-none cursor-pointer"
+                       />
                        <span className="text-2xl font-bold">A</span>
                     </div>
-                    <p className="text-[10px] text-text-secondary text-center font-bold tracking-widest uppercase italic">This affects body font size only</p>
+                    <p className="text-[10px] text-text-secondary text-center font-bold tracking-widest uppercase italic">Current Scale: {typographyScale}% (Affects interface elements)</p>
                  </div>
               </div>
             )}
-            
-            {activeSection !== "profile" && activeSection !== "appearance" && (
-               <div className="flex flex-col items-center justify-center py-24 text-center space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-bg-raised flex items-center justify-center text-text-secondary/20">
-                    <Settings2 size={32} />
+
+            {activeSection === "account" && (
+               <div className="space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
+                  <h2 className="text-xl font-styrene font-bold">Account & Privacy</h2>
+
+                  <div className="grid grid-cols-2 gap-6">
+                     <div className="p-5 rounded-2xl bg-bg-raised dark:bg-bg-base border border-border space-y-2">
+                        <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">Storage Status</p>
+                        <div className="flex items-center justify-between">
+                           <span className="text-lg font-bold">14.2 MB used</span>
+                           <span className="text-xs text-text-secondary">of 500 MB</span>
+                        </div>
+                        <div className="h-1.5 bg-white dark:bg-bg-raised rounded-full overflow-hidden">
+                           <div className="h-full bg-accent-primary w-[3%]" />
+                        </div>
+                     </div>
+                     <div className="p-5 rounded-2xl bg-bg-raised dark:bg-bg-base border border-border space-y-2">
+                        <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">Security Level</p>
+                        <div className="flex items-center gap-2 text-green-500">
+                           <ShieldCheck size={20} />
+                           <span className="text-lg font-bold">Advanced</span>
+                        </div>
+                     </div>
                   </div>
-                  <h3 className="font-styrene font-bold text-lg">Settings section: {activeSection}</h3>
-                  <p className="text-sm text-text-secondary max-w-xs">This configuration page is part of the MVP specification and will be fully interactive in the next update.</p>
+
+                  <div className="space-y-4">
+                     <h3 className="text-xs font-bold text-text-secondary uppercase tracking-widest pl-1">Data Management</h3>
+                     <div className="space-y-2">
+                        <button className="w-full flex items-center justify-between p-4 rounded-xl border border-border hover:bg-bg-raised transition-colors group">
+                           <div className="text-left">
+                              <p className="text-sm font-bold">Export My JSON Data</p>
+                              <p className="text-xs text-text-secondary">Download all your materials and study sessions.</p>
+                           </div>
+                           <ArrowRight size={18} className="text-text-secondary group-hover:translate-x-1 transition-transform" />
+                        </button>
+                        <button className="w-full flex items-center justify-between p-4 rounded-xl border border-border hover:border-red-200 hover:bg-red-50 transition-colors group">
+                           <div className="text-left">
+                              <p className="text-sm font-bold text-red-500">Delete Account</p>
+                              <p className="text-xs text-text-secondary text-red-400">Permanently remove all data and papers.</p>
+                           </div>
+                           <Trash2 size={18} className="text-red-300 group-hover:scale-110 transition-transform" />
+                        </button>
+                     </div>
+                  </div>
+               </div>
+            )}
+            
+            {activeSection === "notifications" && (
+               <div className="flex flex-col items-center justify-center py-24 text-center space-y-4">
+                  <div className="w-16 h-16 rounded-full bg-bg-raised flex items-center justify-center text-accent-primary shadow-inner">
+                    <Bell size={32} />
+                  </div>
+                  <h3 className="font-styrene font-bold text-lg">Push Notifications</h3>
+                  <p className="text-sm text-text-secondary max-w-xs">Browser push notifications are currently being enabled for critical processing updates.</p>
+                  <Button variant="ghost" className="border-border">Enable in Browser</Button>
                </div>
             )}
           </Card>
@@ -131,12 +209,15 @@ export default function SettingsPage() {
   );
 }
 
-function ThemeOption({ icon: Icon, label, active = false }: any) {
+function ThemeOption({ icon: Icon, label, active = false, onClick }: any) {
   return (
-    <button className={cn(
-      "flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all group",
-      active ? "border-accent-primary bg-accent-primary/5 text-accent-primary" : "border-border hover:border-accent-primary/30 text-text-secondary"
-    )}>
+    <button 
+      onClick={onClick}
+      className={cn(
+        "flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all group",
+        active ? "border-accent-primary bg-accent-primary/5 text-accent-primary shadow-lg shadow-accent-primary/5" : "border-border hover:border-accent-primary/30 text-text-secondary"
+      )}
+    >
        <Icon size={24} className={active ? "text-accent-primary" : "text-text-secondary group-hover:text-accent-primary"} />
        <span className="text-xs font-bold uppercase tracking-widest">{label}</span>
     </button>

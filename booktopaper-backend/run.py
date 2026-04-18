@@ -2,6 +2,11 @@
 BookToPaper Flask Backend — Entry Point
 Run: python run.py
 """
+# Load .env BEFORE importing any app modules so all os.getenv() calls
+# (including module-level ones in ai_client.py) see the correct values.
+from dotenv import load_dotenv
+load_dotenv()
+
 from app import create_app
 
 app = create_app()

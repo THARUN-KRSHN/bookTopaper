@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils";
 import { materials as materialsApi, type Material, type Topic } from "@/lib/api";
 import { toast } from "@/lib/toast";
 import { formatDate } from "@/lib/utils";
+import { useUIStore } from "@/lib/store";
+import { ConfirmModal } from "@/components/shared/ConfirmModal";
 
 export default function MaterialsPage() {
   const [view, setView] = useState<"grid" | "list">("grid");
@@ -22,7 +24,14 @@ export default function MaterialsPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
   const [draggingOver, setDraggingOver] = useState(false);
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; id: string; name: string }>({
+    isOpen: false,
+    id: "",
+    name: "",
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const { addNotification } = useUIStore();
 
   const fetchMaterials = useCallback(async () => {
     try {
@@ -61,6 +70,11 @@ export default function MaterialsPage() {
       await materialsApi.upload(file);
       toast.dismiss(loadingId);
       toast.success("Material uploaded and processed!");
+      addNotification({
+        title: "Material Processed",
+        message: `Successfully extracted topics from "${file.name}".`,
+        type: "success",
+      });
       setUploadProgress(100);
       setTimeout(() => setUploadProgress(0), 800);
       await fetchMaterials();
@@ -75,10 +89,14 @@ export default function MaterialsPage() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
     try {
       await materialsApi.delete(id);
       toast.success("Material deleted.");
+      addNotification({
+        title: "Material Deleted",
+        message: `"${name}" has been removed.`,
+        type: "info",
+      });
       setMaterialList((prev) => prev.filter((m) => m.id !== id));
       if (selectedMaterial?.id === id) setSelectedMaterial(null);
     } catch {
@@ -209,12 +227,22 @@ export default function MaterialsPage() {
               material={mat}
               view={view}
               onView={() => openTopics(mat)}
-              onDelete={() => handleDelete(mat.id, mat.filename)}
+              onDelete={() => setDeleteModal({ isOpen: true, id: mat.id, name: mat.filename })}
               onReprocess={() => handleReprocess(mat.id)}
             />
           ))}
         </div>
       )}
+
+      <ConfirmModal 
+        isOpen={deleteModal.isOpen}
+        title="Delete Material"
+        message={`Are you sure you want to delete "${deleteModal.name}"? This will also remove all associated topics and cannot be undone.`}
+        variant="danger"
+        confirmText="Delete Material"
+        onClose={() => setDeleteModal(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={() => handleDelete(deleteModal.id, deleteModal.name)}
+      />
 
       {/* Topics Drawer */}
       {selectedMaterial && (

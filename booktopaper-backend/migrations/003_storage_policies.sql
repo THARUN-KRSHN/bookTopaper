@@ -6,11 +6,35 @@
 -- 1. Ensure buckets are public (allows get_public_url to work)
 UPDATE storage.buckets SET public = true WHERE id IN ('materials', 'papers');
 
--- 2. Enable RLS on storage if not already
-ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+-- 2. RLS is already enabled on storage.objects by Supabase — no action needed.
 
--- 3. Policy: Allow users to upload to their own materials folder
--- Path format: materials/[user_id]/[filename]
+-- ────────────────────────────────────────────────
+-- Drop any old conflicting policies before re-creating
+-- ────────────────────────────────────────────────
+DROP POLICY IF EXISTS "Users can upload their own materials"        ON storage.objects;
+DROP POLICY IF EXISTS "Users can view their own materials"          ON storage.objects;
+DROP POLICY IF EXISTS "Users can delete their own materials"        ON storage.objects;
+DROP POLICY IF EXISTS "Users can upload their own papers"           ON storage.objects;
+DROP POLICY IF EXISTS "Users can view their own papers"             ON storage.objects;
+DROP POLICY IF EXISTS "Users can delete their own papers"           ON storage.objects;
+DROP POLICY IF EXISTS "Service role can do everything"              ON storage.objects;
+
+-- ────────────────────────────────────────────────
+-- Service-role bypass (must come first / broadest)
+-- The backend uses the Service Role key which SHOULD bypass RLS,
+-- but an explicit policy guarantees it regardless of Supabase version.
+-- ────────────────────────────────────────────────
+CREATE POLICY "Service role can do everything"
+ON storage.objects FOR ALL
+TO service_role
+USING (true)
+WITH CHECK (true);
+
+-- ────────────────────────────────────────────────
+-- materials bucket — authenticated user policies
+-- Path format: {user_id}/{material_id}/{filename}
+-- foldername(name)[1] returns the first path segment (user_id)
+-- ────────────────────────────────────────────────
 CREATE POLICY "Users can upload their own materials"
 ON storage.objects FOR INSERT
 TO authenticated
@@ -19,7 +43,6 @@ WITH CHECK (
   (storage.foldername(name))[1] = auth.uid()::text
 );
 
--- 4. Policy: Allow users to see their own materials
 CREATE POLICY "Users can view their own materials"
 ON storage.objects FOR SELECT
 TO authenticated
@@ -28,7 +51,17 @@ USING (
   (storage.foldername(name))[1] = auth.uid()::text
 );
 
--- 5. Policy: Allow users to upload to their own papers folder
+CREATE POLICY "Users can delete their own materials"
+ON storage.objects FOR DELETE
+TO authenticated
+USING (
+  bucket_id = 'materials' AND
+  (storage.foldername(name))[1] = auth.uid()::text
+);
+
+-- ────────────────────────────────────────────────
+-- papers bucket — authenticated user policies
+-- ────────────────────────────────────────────────
 CREATE POLICY "Users can upload their own papers"
 ON storage.objects FOR INSERT
 TO authenticated
@@ -37,7 +70,6 @@ WITH CHECK (
   (storage.foldername(name))[1] = auth.uid()::text
 );
 
--- 6. Policy: Allow users to view their own papers
 CREATE POLICY "Users can view their own papers"
 ON storage.objects FOR SELECT
 TO authenticated
@@ -46,9 +78,10 @@ USING (
   (storage.foldername(name))[1] = auth.uid()::text
 );
 
--- 7. Policy: Global bypass for service role (Internal backend operations)
-CREATE POLICY "Service role can do everything"
-ON storage.objects FOR ALL
-TO service_role
-USING (true)
-WITH CHECK (true);
+CREATE POLICY "Users can delete their own papers"
+ON storage.objects FOR DELETE
+TO authenticated
+USING (
+  bucket_id = 'papers' AND
+  (storage.foldername(name))[1] = auth.uid()::text
+);

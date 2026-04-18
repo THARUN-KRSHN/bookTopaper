@@ -5,28 +5,45 @@ import os
 import json
 import httpx
 
-OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-OPENROUTER_API_KEY  = os.getenv("OPENROUTER_API_KEY", "")
-DEFAULT_MODEL       = os.getenv("OPENROUTER_MODEL_DEFAULT", "anthropic/claude-3.5-sonnet")
-VISION_MODEL        = os.getenv("OPENROUTER_MODEL_VISION", "openai/gpt-4o")
 
-_HEADERS = {
-    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-    "HTTP-Referer": "https://booktopaper.app",
-    "X-Title": "BookToPaper",
-    "Content-Type": "application/json",
-}
+def _base_url() -> str:
+    return os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+
+
+def _default_model() -> str:
+    return os.getenv("OPENROUTER_MODEL_DEFAULT", "anthropic/claude-3.5-sonnet")
+
+
+def _vision_model() -> str:
+    return os.getenv("OPENROUTER_MODEL_VISION", "openai/gpt-4o")
+
+
+def _get_headers() -> dict:
+    """Build headers lazily so OPENROUTER_API_KEY is read after dotenv loads."""
+    key = os.getenv("OPENROUTER_API_KEY", "")
+    if not key:
+        raise RuntimeError(
+            "OPENROUTER_API_KEY is not set. "
+            "Add it to your .env file and restart the server."
+        )
+    return {
+        "Authorization": f"Bearer {key}",
+        "HTTP-Referer": "https://booktopaper.app",
+        "X-Title": "BookToPaper",
+        "Content-Type": "application/json",
+    }
 
 
 def chat_completion(
     messages: list,
-    model: str = DEFAULT_MODEL,
+    model: str | None = None,
     max_tokens: int = 4000,
     expect_json: bool = False,
 ) -> str:
     """Call OpenRouter chat completions endpoint. Returns the text content."""
+    resolved_model = model or _default_model()
     payload: dict = {
-        "model": model,
+        "model": resolved_model,
         "messages": messages,
         "max_tokens": max_tokens,
     }
@@ -35,13 +52,26 @@ def chat_completion(
 
     with httpx.Client(timeout=90.0) as client:
         response = client.post(
-            f"{OPENROUTER_BASE_URL}/chat/completions",
-            headers=_HEADERS,
+            f"{_base_url()}/chat/completions",
+            headers=_get_headers(),
             json=payload,
         )
-        response.raise_for_status()
 
-    return response.json()["choices"][0]["message"]["content"]
+    # Attach the response body to any error so we can see exactly what
+    # OpenRouter returned (auth errors, quota issues, bad model names, etc.)
+    if response.status_code >= 400:
+        try:
+            body = response.json()
+        except Exception:
+            body = response.text
+        raise httpx.HTTPStatusError(
+            f"OpenRouter {response.status_code}: {body}",
+            request=response.request,
+            response=response,
+        )
+
+    data = response.json()
+    return data["choices"][0]["message"]["content"]
 
 
 def vision_completion(
@@ -64,7 +94,7 @@ def vision_completion(
             ],
         }
     ]
-    return chat_completion(messages, model=VISION_MODEL, max_tokens=4000)
+    return chat_completion(messages, model=_vision_model(), max_tokens=4000)
 
 
 def parse_json_response(raw: str) -> dict | list:

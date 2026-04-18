@@ -121,9 +121,9 @@ def generate_paper(config: dict, user_id: str) -> dict:
         "sections": built_sections,
         "pdf_path": paper.get("pdf_path"),
     }
-    sb.table("papers").insert(db_row).execute()
+    result = sb.table("papers").insert(db_row).execute()
 
-    return paper
+    return result.data[0]
 
 
 def generate_questions_ai(

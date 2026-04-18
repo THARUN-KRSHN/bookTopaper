@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useAuthStore } from "@/lib/store";
+import { useAuthStore, useUIStore } from "@/lib/store";
 import { materials as materialsApi, papers as papersApi, evaluations as evalApi } from "@/lib/api";
 import { toast } from "@/lib/toast";
 
@@ -60,6 +60,19 @@ export default function DashboardHome() {
     };
     loadStats();
   }, []);
+
+  const { addNotification } = useUIStore();
+
+  useEffect(() => {
+    if (user && !sessionStorage.getItem("btp_welcome_sent")) {
+      addNotification({
+        title: `Welcome back, ${firstName}!`,
+        message: "You've successfully signed in. Let's get some studying done today.",
+        type: "success",
+      });
+      sessionStorage.setItem("btp_welcome_sent", "true");
+    }
+  }, [user, firstName, addNotification]);
 
   const statCards = [
     { label: "Materials uploaded", value: stats.materials, icon: Files, color: "text-blue-500" },
