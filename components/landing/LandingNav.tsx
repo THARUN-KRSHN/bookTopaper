@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { BookOpen, Menu, X } from "lucide-react";
+import { BookOpen, Menu, X, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { useUIStore } from "@/lib/store";
@@ -10,7 +10,7 @@ import { useUIStore } from "@/lib/store";
 export function LandingNav() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { setAuthModalOpen, setAuthMode } = useUIStore();
+  const { setAuthModalOpen, setAuthMode, theme, setTheme } = useUIStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +19,11 @@ export function LandingNav() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "light" ? "dark" : theme === "dark" ? "system" : "light";
+    setTheme(next);
+  };
 
   const openAuth = (mode: "login" | "signup") => {
     setAuthMode(mode);
@@ -56,7 +61,16 @@ export function LandingNav() {
             <Link href="#how-it-works" className="text-sm font-medium text-text-secondary hover:text-accent-primary transition-colors">How it works</Link>
           </nav>
           <div className="h-4 w-px bg-border mx-2" />
+          
           <div className="flex items-center gap-2 md:gap-4">
+            <Button 
+              variant="ghost" 
+              className="p-2 h-10 w-10 px-0 rounded-full text-text-secondary"
+              onClick={toggleTheme}
+            >
+              {theme === "light" ? <Sun size={20} /> : <Moon size={20} />}
+            </Button>
+
             <Button 
               variant="ghost" 
               onClick={() => openAuth("login")} 
@@ -74,12 +88,21 @@ export function LandingNav() {
         </div>
 
         {/* Mobile menu toggle */}
-        <button
-          className="md:hidden p-2 text-text-primary"
-          onClick={() => setMobileMenuOpen(true)}
-        >
-          <Menu size={24} />
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <Button 
+            variant="ghost" 
+            className="p-2 h-10 w-10 px-0 rounded-full text-text-secondary"
+            onClick={toggleTheme}
+          >
+            {theme === "light" ? <Sun size={20} /> : <Moon size={20} />}
+          </Button>
+          <button
+            className="p-2 text-text-primary"
+            onClick={() => setMobileMenuOpen(true)}
+          >
+            <Menu size={24} />
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu Overlay */}
@@ -88,7 +111,7 @@ export function LandingNav() {
           <div className="flex items-center justify-between mb-12">
             <Link href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
               <div className="w-10 h-10 rounded-xl bg-accent-primary flex items-center justify-center text-white">
-                <BookOpen size={24} />
+                <img src="/images/logo.png" className="w-6 h-6 object-contain" alt="Logo" />
               </div>
               <span className="font-styrene font-bold text-xl text-accent-primary">BookToPaper</span>
             </Link>

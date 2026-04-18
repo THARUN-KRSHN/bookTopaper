@@ -1,11 +1,11 @@
 "use client";
 
-import { Bell, Search, Sun, Moon, Menu } from "lucide-react";
+import { Bell, Search, Sun, Moon, Menu, User as UserIcon } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 import { useUIStore, useAuthStore } from "@/lib/store";
 import { Button } from "@/components/ui/Button";
-import { useState } from "react";
 import { NotificationPanel } from "./NotificationPanel";
-import { cn } from "@/lib/utils";
 
 export function AppTopBar() {
   const { toggleSidebar, theme, setTheme, notifications } = useUIStore();
@@ -29,42 +29,42 @@ export function AppTopBar() {
       <div className="flex items-center gap-4">
         <button
           onClick={toggleSidebar}
-          className="lg:hidden p-2 text-text-secondary hover:text-accent-primary"
+          className="md:hidden p-2 text-text-secondary hover:text-accent-primary transition-colors active:scale-90"
         >
-          <Menu size={20} />
+          <Menu size={22} />
         </button>
         <div className="hidden md:flex items-center gap-2 text-sm text-text-secondary font-medium">
-          <span className="hover:text-text-primary cursor-pointer transition-colors">
+          <Link href="/dashboard" className="hover:text-text-primary cursor-pointer transition-colors">
             Dashboard
-          </span>
+          </Link>
         </div>
       </div>
 
-      <div className="flex-1 max-w-xl px-8 hidden sm:block">
+      <div className="flex-1 max-w-xl px-4 md:px-8">
         <div className="relative group">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary w-4 h-4 group-focus-within:text-accent-primary transition-colors" />
           <input
             type="text"
-            placeholder="Search papers, materials or topics… (⌘K)"
-            className="w-full bg-bg-raised border border-border rounded-xl py-2 pl-10 pr-4 text-sm outline-none focus:border-accent-primary focus:ring-2 focus:ring-accent-primary/20 transition-all"
+            placeholder="Search..."
+            className="w-full bg-bg-raised border border-border rounded-xl py-2 pl-10 pr-4 text-xs md:text-sm outline-none focus:border-accent-primary focus:ring-2 focus:ring-accent-primary/20 transition-all"
           />
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 md:gap-2">
         <Button 
           variant="ghost" 
-          className="p-2 h-10 w-10 px-0 rounded-full text-text-secondary relative"
+          className="p-2 h-10 w-10 px-0 rounded-full text-text-secondary relative hover:bg-bg-raised"
           onClick={() => setNotifOpen(true)}
         >
           <Bell size={20} />
           {unreadCount > 0 && (
-            <span className="absolute top-2 right-2 w-2 h-2 bg-accent-primary rounded-full border-2 border-bg-surface" />
+            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-accent-primary rounded-full border-2 border-bg-surface" />
           )}
         </Button>
         <Button 
           variant="ghost" 
-          className="p-2 h-10 w-10 px-0 rounded-full text-text-secondary"
+          className="hidden sm:flex p-2 h-10 w-10 px-0 rounded-full text-text-secondary hover:bg-bg-raised"
           onClick={toggleTheme}
           title={`Theme: ${theme}`}
         >
@@ -75,13 +75,16 @@ export function AppTopBar() {
              <Moon size={12} className="absolute -bottom-1 -right-1" />
            </div>}
         </Button>
-        <div className="w-8 h-8 rounded-full bg-accent-primary overflow-hidden ml-2 cursor-pointer shadow-sm flex items-center justify-center text-white text-xs font-bold ring-2 ring-bg-surface">
-          {avatarUrl ? (
-            <img src={avatarUrl} alt="User avatar" className="w-full h-full object-cover" />
-          ) : (
-            initials
-          )}
-        </div>
+        
+        <Link href="/dashboard/settings">
+          <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-accent-primary/10 border border-accent-primary/20 overflow-hidden ml-1 md:ml-2 cursor-pointer shadow-sm flex items-center justify-center text-accent-primary text-[10px] md:text-xs font-bold ring-2 ring-transparent hover:ring-accent-primary/30 transition-all active:scale-95">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="User avatar" className="w-full h-full object-cover" />
+            ) : (
+              initials
+            )}
+          </div>
+        </Link>
       </div>
 
       <NotificationPanel isOpen={notifOpen} onClose={() => setNotifOpen(false)} />

@@ -33,9 +33,7 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-bg-base flex overflow-x-hidden">
-      <div className="hidden md:flex flex-col shrink-0">
-        <AppSidebar />
-      </div>
+      <AppSidebar />
       <div
         className={cn(
           "flex-1 flex flex-col transition-all duration-300 w-full min-w-0",
