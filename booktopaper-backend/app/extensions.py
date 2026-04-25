@@ -19,9 +19,8 @@ def get_supabase() -> Client:
                 "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in environment."
             )
         options = ClientOptions(
-            storage_client_timeout=120,
+            storage_client_timeout=httpx.Timeout(120.0, connect=20.0, read=120.0, write=120.0),
             postgrest_client_timeout=60,
-            httpx_client=httpx.Client(timeout=120.0)
         )
         _supabase = create_client(url, key, options=options)
     return _supabase

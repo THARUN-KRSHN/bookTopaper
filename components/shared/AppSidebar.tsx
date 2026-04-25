@@ -157,9 +157,9 @@ export function AppSidebar() {
         >
           {sidebarOpen ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
         </button>
-
-        <HelpModal />
       </div>
+
+      <HelpModal />
     </>
   );
 }
