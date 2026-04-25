@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Play, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useUIStore } from "@/lib/store";
+import Link from "next/link";
 
 export function HeroSection() {
   const { setAuthModalOpen, setAuthMode } = useUIStore();
@@ -80,13 +81,15 @@ export function HeroSection() {
             Start for free
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </Button>
-          <Button 
-            variant="ghost" 
-            className="w-full sm:w-auto px-6 md:px-8 h-11 md:h-14 text-base md:text-lg rounded-xl md:rounded-2xl flex items-center justify-center gap-2 border-border/50 hover:bg-white hover:border-border shadow-sm group"
-          >
-            <Play size={16} className="fill-text-primary group-hover:scale-110 transition-transform md:w-[18px] md:h-[18px]" />
-            Watch demo
-          </Button>
+          <Link href="/demo" className="w-full sm:w-auto">
+            <Button 
+              variant="ghost" 
+              className="w-full sm:w-auto px-6 md:px-8 h-11 md:h-14 text-base md:text-lg rounded-xl md:rounded-2xl flex items-center justify-center gap-2 border-border/50 hover:bg-white hover:border-border shadow-sm group"
+            >
+              <Play size={16} className="fill-text-primary group-hover:scale-110 transition-transform md:w-[18px] md:h-[18px]" />
+              Watch demo
+            </Button>
+          </Link>
         </motion.div>
 
         {/* Trust Line */}

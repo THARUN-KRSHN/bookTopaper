@@ -2,7 +2,8 @@
 app/extensions.py — Supabase client singleton
 """
 import os
-from supabase import create_client, Client
+import httpx
+from supabase import create_client, Client, ClientOptions
 
 _supabase: Client | None = None
 
@@ -17,5 +18,10 @@ def get_supabase() -> Client:
             raise RuntimeError(
                 "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in environment."
             )
-        _supabase = create_client(url, key)
+        options = ClientOptions(
+            storage_client_timeout=120,
+            postgrest_client_timeout=60,
+            httpx_client=httpx.Client(timeout=120.0)
+        )
+        _supabase = create_client(url, key, options=options)
     return _supabase

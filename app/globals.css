@@ -25,49 +25,81 @@
   --shadow-sm-custom: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
+/* ── BookToPaper Design Tokens ── */
 :root {
-  /* Light Theme */
-  --bg-base: #FAF9F7;
+  /* Backgrounds — all light/white in light mode */
+  --bg-base: #EDF2F4;
+  /* Anti-flash white — page background */
   --bg-surface: #FFFFFF;
-  --bg-raised: #F5F3EF;
-  --accent-primary: #CC785C;
-  --accent-warm: #E8C547;
-  --text-primary: #1A1916;
-  --text-secondary: #6B6860;
-  --border-color: rgba(0, 0, 0, 0.08);
-  
-  --foreground: var(--text-primary);
-  --background: var(--bg-base);
+  /* Pure white — cards, topbar, sidebar, panels */
+  --bg-raised: #F5F5F5;
+  /* Lifted — input fields, hover states */
+
+  /* Accent — red only */
+  --accent-primary: #FF0000;
+  /* Red — CTAs, active nav, badges */
+  --accent-secondary: #C80018;
+  /* Fire engine red — hover, pressed, danger */
+
+  /* Text — dark on light */
+  --text-primary: #1D1E27;
+  /* Raven black — headings, body */
+  --text-secondary: #4B4E53;
+  /* Davy's grey — captions, hints */
+
+  /* Border */
+  --border-color: rgba(29, 30, 39, 0.10);
+
+  /* Component aliases */
+  --color-bg-base: var(--bg-base);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-raised: var(--bg-raised);
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-warm: var(--accent-secondary);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border: var(--border-color);
 }
 
+/* Dark mode — inverts to Raven black base */
 .dark {
-  /* Dark Theme */
-  --bg-base: #1A1916;
-  --bg-surface: #232220;
-  --bg-raised: #2C2B28;
-  --accent-primary: #D4866A;
-  --accent-warm: #D4B43C;
-  --text-primary: #F0EEE9;
-  --text-secondary: #9B9890;
-  --border-color: rgba(255, 255, 255, 0.08);
+  --bg-base: #1D1E27;
+  --bg-surface: #23242F;
+  --bg-raised: #2A2B37;
+  --text-primary: #EDF2F4;
+  --text-secondary: #4B4E53;
+  --border-color: rgba(237, 242, 244, 0.10);
+  /* Accents unchanged — red works on dark too */
+}
 
-  --foreground: var(--text-primary);
-  --background: var(--bg-base);
+/* Sidebar active state */
+.sidebar-active {
+  background: rgba(255, 0, 0, 0.08);
+  color: #C80018;
+}
+
+/* Button hover */
+.btn-primary:hover {
+  background: #C80018;
 }
 
 @layer base {
   * {
     @apply border-[--border-color];
   }
+
   body {
     @apply bg-bg-base text-text-primary font-sohne antialiased selection:bg-accent-primary/20;
   }
+
   h1 {
     @apply text-2xl md:text-4xl lg:text-5xl font-styrene font-semibold tracking-tight;
   }
+
   h2 {
     @apply text-xl md:text-2xl lg:text-3xl font-styrene font-medium tracking-tight;
   }
+
   h3 {
     @apply text-lg md:text-xl font-styrene font-medium tracking-tight;
   }
@@ -78,18 +110,23 @@
   .btn-primary {
     @apply bg-accent-primary text-white px-6 py-2.5 rounded-xl font-medium transition-all duration-150 hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
   }
+
   .btn-ghost {
     @apply border border-border bg-transparent px-6 py-2.5 rounded-xl transition-all duration-150 hover:bg-bg-raised active:scale-95 disabled:opacity-50;
   }
+
   .card {
     @apply bg-bg-surface border border-border rounded-2xl p-6 shadow-[--shadow-sm-custom];
   }
+
   .input-base {
     @apply bg-bg-raised border border-border rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-150 focus:border-accent-primary focus:ring-2 focus:ring-accent-primary/20;
   }
+
   .sidebar-item {
     @apply flex items-center gap-3 px-3 py-2 rounded-xl text-text-secondary transition-all duration-150 hover:bg-accent-primary/5 hover:text-accent-primary;
   }
+
   .sidebar-active {
     @apply bg-accent-primary/10 text-accent-primary font-medium;
   }
@@ -97,14 +134,31 @@
 
 /* Animations */
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-8px); }
-  75% { transform: translateX(8px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-8px);
+  }
+
+  75% {
+    transform: translateX(8px);
+  }
 }
 
 .animate-float {
@@ -112,7 +166,7 @@
 }
 
 .animate-shake {
-  animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+  animation: shake 0.3s cubic-bezier(.36, .07, .19, .97) both;
 }
 
 /* Dot Grid Pattern */
@@ -128,7 +182,7 @@
   .mobile-tight {
     @apply p-3 md:p-6 gap-3 md:gap-6;
   }
-  
+
   .text-balance {
     text-wrap: balance;
   }
@@ -138,6 +192,7 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

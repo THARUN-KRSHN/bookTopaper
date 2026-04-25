@@ -21,7 +21,7 @@ export function LandingNav() {
   }, []);
 
   const toggleTheme = () => {
-    const next = theme === "light" ? "dark" : theme === "dark" ? "system" : "light";
+    const next = theme === "light" ? "dark" : "light";
     setTheme(next);
   };
 
@@ -61,25 +61,25 @@ export function LandingNav() {
             <Link href="#how-it-works" className="text-sm font-medium text-text-secondary hover:text-accent-primary transition-colors">How it works</Link>
           </nav>
           <div className="h-4 w-px bg-border mx-2" />
-          
+
           <div className="flex items-center gap-2 md:gap-4">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               className="p-2 h-10 w-10 px-0 rounded-full text-text-secondary"
               onClick={toggleTheme}
             >
               {theme === "light" ? <Sun size={20} /> : <Moon size={20} />}
             </Button>
 
-            <Button 
-              variant="ghost" 
-              onClick={() => openAuth("login")} 
+            <Button
+              variant="ghost"
+              onClick={() => openAuth("login")}
               className="h-9 md:h-11 px-3 md:px-5 text-sm font-bold border-none hover:bg-bg-raised"
             >
               Log in
             </Button>
-            <Button 
-              onClick={() => openAuth("signup")} 
+            <Button
+              onClick={() => openAuth("signup")}
               className="h-9 md:h-11 px-4 md:px-6 text-sm font-bold shadow-lg shadow-accent-primary/20"
             >
               Join free
@@ -89,8 +89,8 @@ export function LandingNav() {
 
         {/* Mobile menu toggle */}
         <div className="flex items-center gap-2 md:hidden">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             className="p-2 h-10 w-10 px-0 rounded-full text-text-secondary"
             onClick={toggleTheme}
           >
